@@ -13,6 +13,14 @@ MovieModel.find()
 .catch((err)=>{res.json(err)})
 })
 
+//GET top10 movies
+//SORT => 1 => ASC || -1 =>DESC
+router.get('/top10',(req,res)=>{
+  MovieModel.find().sort({imdb_score:1}).limit(10)
+  .then((movieList)=>{res.json(movieList)})
+  .catch((err)=>{res.json(err)})
+  })
+
 // GET details of a movie /api/movies/:movieId
 router.get('/:movieId',(req,res)=>{
 MovieModel.findById(req.params.movieId)
@@ -20,12 +28,20 @@ MovieModel.findById(req.params.movieId)
 .catch((err)=>{res.json(err)})
 })
 
+ // List movies between specific date
+router.get('/between/:startYear/:endYear',(req,res)=>{
+  const{startYear,endYear} = req.params
+  MovieModel.find({year:{"$gte":parseInt(startYear), "$lte":parseInt(endYear)}})  //gte= greater than or equal , lte= less than or equal
+  .then((movieList)=>{res.json(movieList)})
+  .catch((err)=>{res.json(err)})  
+}) 
+
 // POST request  to save Movies in the DB
 router.post('/',(req, res, next)=>{
 const newMovie = new MovieModel(req.body)
 newMovie.save()
 .then((movie)=>{res.json(movie)})
-.catch((error)=>{res.json(error)})
+.catch((error)=>{next({message:error})  /*res.json(error)*/})
 })
 
 // PUT Method to update a movie /api/movies/:movieId
@@ -41,6 +57,8 @@ MovieModel.findByIdAndRemove(req.params.movieId)
 .then(movie=>res.json(movie))
 .catch(err=>res.json(err))
 })
+
+
 
 //export the route
 module.exports = router

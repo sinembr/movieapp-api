@@ -6,7 +6,7 @@ const MovieSchema = new Schema({
   title:{
     type:String,
     required:[true, 'The field `{PATH}` is required'],
-    maxlength:[50,'The field `{PATH}` must be less than {MAXLENGTH characters']
+    maxlength:[50,'The field `{PATH}` must be less than {MAXLENGTH} characters']
   },
   category:{type:String, maxlength:30, minlength:1},
   year:{type:Number, min:1850, max:2100},
