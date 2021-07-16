@@ -3,6 +3,8 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+//Config
+const config = require('./config')
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/user.routes');
@@ -10,8 +12,13 @@ const moviesRouter = require('./routes/movie.routes');
 const directorsRouter = require('./routes/director.routes')
 
 var app = express();
+app.set('api_secret_key', config.api_secret_key)
+
 //DB connection
 const db = require('./helpers/db')()
+
+//Token middleware
+const verifyToken = require('./middlewares/verifyToken')
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -25,6 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/api', verifyToken);
 app.use('/api/movies', moviesRouter);
 app.use('/api/directors', directorsRouter);
 

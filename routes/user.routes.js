@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const bcrypt = require('bcrypt');
+var jwt = require('jsonwebtoken');
 
 //Model
 const UserModel = require('../models/User')
@@ -34,7 +35,10 @@ router.post('/authenticate', (req,res)=>{
         if(!result){
           res.json('Authentication failed: Wrong password..')
         } else {
-          res.json('OK,token is ready')
+          // res.json('OK,token is ready')
+          const payload ={username}
+          var token=jwt.sign(payload, req.app.get('api_secret_key'), { expiresIn:7200 /*1h*/});
+          res.json({status:true, token})
         }
       })
     }
